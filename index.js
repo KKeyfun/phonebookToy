@@ -5,7 +5,7 @@ const cors = require('cors');
 const phonebook = require('./expressRequestMethods/controllerExpress');
 const mongoose = require('mongoose');
 
-const url = `mongodb+srv://${username}:${password}@mongomon.aaimrtn.mongodb.net/phonebookApp?retryWrites=true&w=majority`;
+const url = `mongodb+srv://${process.env.username}:${process.env.password}@mongomon.aaimrtn.mongodb.net/phonebookApp?retryWrites=true&w=majority`;
 
 mongoose.set('strictQuery',false);
 mongoose.connect(url);
