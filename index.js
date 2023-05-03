@@ -3,6 +3,19 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const phonebook = require('./expressRequestMethods/controllerExpress');
+const mongoose = require('mongoose');
+
+const url = `mongodb+srv://${username}:${password}@mongomon.aaimrtn.mongodb.net/phonebookApp?retryWrites=true&w=majority`;
+
+mongoose.set('strictQuery',false);
+mongoose.connect(url);
+
+const phonebookSchema = new mongoose.Schema({
+  name : String,
+  number: String,
+})
+
+const Entry = mongoose.model('Entries', phonebookSchema);
 
 const app = express();
 
@@ -22,7 +35,9 @@ app.get('/api/phonebook/:id', (request, response) => {
 
 // Phonebook collection route
 app.get('/api/phonebook', (request, response) => {
-  phonebook.getPhonebook(response);
+  Entry.find({}).select().then(entries => {
+    phonebook.getPhonebook(response);
+  })
 });
 
 // Info route
