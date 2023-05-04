@@ -1,21 +1,9 @@
-// Phonebook backend with express
+// Phonebook backend with express and mongodb
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
-// const phonebook = require('./expressRequestMethods/controllerExpress');
-const mongoose = require('mongoose');
 
-const url = `mongodb+srv://${process.env.username}:${process.env.password}@mongomon.aaimrtn.mongodb.net/phonebookApp?retryWrites=true&w=majority`;
-
-mongoose.set('strictQuery',false);
-mongoose.connect(url);
-
-const phonebookSchema = new mongoose.Schema({
-  name : String,
-  number: String,
-})
-
-const Entry = mongoose.model('Entries', phonebookSchema);
+const Entry = require('./models/phonebook')
 
 const app = express();
 
@@ -33,14 +21,14 @@ app.get('/api/phonebook/:id', (request, response) => {
   // Entry.find({[`${id}`]:id}).select('-_id').then(entries => {
   //   response.json(entries);
   // })
-  Entry.findById(request.params.id).select('-_id').then(entry => {
+  Entry.findById(id).select('-_id -__v').then(entry => {
     response.json(entry);
   })
 });
 
 // Phonebook collection route
 app.get('/api/phonebook', (request, response) => {
-  Entry.find({}).select('-_id').then(entries => {
+  Entry.find({}).select('-_id -__v').then(entries => {
     response.json(entries);
   })
 });
@@ -58,7 +46,7 @@ app.post('/api/phonebook', (request, response) => {
     const entry = new Entry({
       'id':generateId(),
       'name':body.name,
-      'message':body.message
+      'number':body.number
     });
     entry.save().then((newEntry) => {
       response.json(newEntry);
@@ -84,7 +72,7 @@ app.listen(3001);
 
 function checkValid(requestData, response) {
 
-  if(!requestData.name || !requestData.number) {
+  if(requestData.name == undefined|| requestData.undefined) {
     return response.status(400).json({ error: `Invalid Name or Number`});
   }
 
