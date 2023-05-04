@@ -21,14 +21,14 @@ app.get('/api/phonebook/:id', (request, response) => {
   // Entry.find({[`${id}`]:id}).select('-_id').then(entries => {
   //   response.json(entries);
   // })
-  Entry.findById(id).select('-_id -__v').then(entry => {
+  Entry.findById(id).then(entry => {
     response.json(entry);
   })
 });
 
 // Phonebook collection route
 app.get('/api/phonebook', (request, response) => {
-  Entry.find({}).select('-_id -__v').then(entries => {
+  Entry.find({}).then(entries => {
     response.json(entries);
   })
 });
