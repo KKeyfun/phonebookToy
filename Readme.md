@@ -1,6 +1,6 @@
 # Phonebook Toy
 
-Repo for testing out website hosting on https://render.com/
+Repo for testing out website hosting on https://render.com/. Now with MongoDB!
 
 ![Screenshot](https://github.com/KKeyfun/phonebookToy/blob/main/s5drtIb.png)
 
