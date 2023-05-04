@@ -2,7 +2,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
-const phonebook = require('./expressRequestMethods/controllerExpress');
+// const phonebook = require('./expressRequestMethods/controllerExpress');
 const mongoose = require('mongoose');
 
 const url = `mongodb+srv://${process.env.username}:${process.env.password}@mongomon.aaimrtn.mongodb.net/phonebookApp?retryWrites=true&w=majority`;
@@ -30,13 +30,18 @@ app.use(express.static('dist'));
 // Individual note route
 app.get('/api/phonebook/:id', (request, response) => {
   const id = +request.params.id;
-  phonebook.getPhonebookEntry(response, id);
+  // Entry.find({[`${id}`]:id}).select('-_id').then(entries => {
+  //   response.json(entries);
+  // })
+  Entry.findById(request.params.id).select('-_id').then(entry => {
+    response.json(entry);
+  })
 });
 
 // Phonebook collection route
 app.get('/api/phonebook', (request, response) => {
-  Entry.find({}).select().then(entries => {
-    phonebook.getPhonebook(response);
+  Entry.find({}).select('-_id').then(entries => {
+    response.json(entries);
   })
 });
 
@@ -46,21 +51,46 @@ app.get('/info', (request, response) => {
   response.send(infoString);
 });
 
-// New note route
+// Add new note route
 app.post('/api/phonebook', (request, response) => {
-  phonebook.addEntry(request, response);
+  const body = request.body;
+  if(checkValid(body,response)){
+    const entry = new Entry({
+      'id':generateId(),
+      'name':body.name,
+      'message':body.message
+    });
+    entry.save().then((newEntry) => {
+      response.json(newEntry);
+    })
+  }
 });
 
 // Delete note route
+// TODO
 app.delete('/api/phonebook/:id', (request, response) => {
   const id = +request.params.id;
   phonebook.deleteEntry(response, id);
 });
 
 // Update note route
+// TODO
 app.put('/api/phonebook/:id', (request, response) => {
   const id = +request.params.id;
   phonebook.updateEntry(response, request.body, id);
 });
 
 app.listen(3001);
+
+function checkValid(requestData, response) {
+
+  if(!requestData.name || !requestData.number) {
+    return response.status(400).json({ error: `Invalid Name or Number`});
+  }
+
+  return true;
+}
+
+function generateId() {
+  return (Math.floor(Math.random() * 100) + 3);
+}

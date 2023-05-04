@@ -12,20 +12,6 @@ function countPeople() {
   return data.length;
 }
 
-function checkValid(requestData, response) {
-  if (!requestData.name || !requestData.number) {
-    return response.status(400).json({
-      error: 'Content missing',
-    });
-  }
-  if (data.find((entry) => entry.name === requestData.name)) {
-    return response.status(400).json({
-      error: 'Name already exists',
-    });
-  }
-  return null;
-}
-
 function getPhonebook(response) {
   response.json(data);
 }
@@ -38,20 +24,6 @@ function getPhonebookEntry(response, id) {
   } else {
     response.status(404).json({ error: 'Entry not found' }).end();
   }
-}
-
-function addEntry(request, response) {
-  const personData = request.body;
-  const error = checkValid(personData, response);
-  if (error) {
-    return;
-  }
-  const person = {
-    id: generateId(),
-    ...personData,
-  };
-  data = data.concat(person);
-  response.json(person);
 }
 
 function deleteEntry(response, id) {
@@ -85,5 +57,5 @@ async function updateEntry(response, { name, number }, id) {
 }
 
 module.exports = {
-  getPhonebook, getPhonebookEntry, addEntry, updateEntry, deleteEntry, checkValid, countPeople,
+  getPhonebook, getPhonebookEntry, updateEntry, deleteEntry, countPeople,
 };
