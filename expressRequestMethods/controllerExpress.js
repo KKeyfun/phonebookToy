@@ -1,9 +1,5 @@
 let data = require('../data/phonebook');
 
-function generateId() {
-  return (Math.floor(Math.random() * 100) + 3);
-}
-
 function findEntry(id) {
   return data.find((entry) => entry.id === id);
 }

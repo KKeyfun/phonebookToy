@@ -15,7 +15,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 app.use(express.static('dist'));
 
 // Routes
-// Individual note route
+// Individual route
 app.get('/api/phonebook/:id', (request, response) => {
   Entry.findById(request.params.id).then(entry => {
     response.json(entry);
@@ -35,8 +35,8 @@ app.get('/info', (request, response) => {
   response.send(infoString);
 });
 
-// Add new note route
-app.post('/api/phonebook', (request, response) => {
+// Add route
+app.post('/api/phonebook', (request, response, next) => {
   const body = request.body;
     const entry = new Entry({
       'name':body.name,
@@ -49,7 +49,7 @@ app.post('/api/phonebook', (request, response) => {
       .catch(error => next(error));
 });
 
-// Delete note route
+// Delete route
 app.delete('/api/phonebook/:id', (request, response, next) => {
   Entry.findByIdAndRemove(request.params.id)
     .then(response => {
@@ -58,7 +58,7 @@ app.delete('/api/phonebook/:id', (request, response, next) => {
     .catch(error => next(error))
 });
 
-// Update note route
+// Update route
 app.put('/api/phonebook/:id', (request, response, next) => {
   const newNumber = request.body.number;
 
@@ -74,8 +74,8 @@ app.put('/api/phonebook/:id', (request, response, next) => {
 });
 
 // handler for unknown route
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
+const unknownEndpoint = (request,response) => {
+  response.status(404).send({ error: 'unknown endpoint' });
 }
 
 const errorHandler = (error, request, response, next) => {
