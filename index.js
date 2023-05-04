@@ -52,7 +52,7 @@ app.post('/api/phonebook', (request, response, next) => {
 // Delete route
 app.delete('/api/phonebook/:id', (request, response, next) => {
   Entry.findByIdAndRemove(request.params.id)
-    .then(response => {
+    .then(() => {
       response.status(204).end();
     })
     .catch(error => next(error))
@@ -86,8 +86,6 @@ const errorHandler = (error, request, response, next) => {
   } else if (error.name === "ValidationError") { 
     return response.status(400).json({ error: error.message });
   }
-
-
   next(error)
 }
 app.use(unknownEndpoint);
