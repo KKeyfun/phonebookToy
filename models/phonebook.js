@@ -3,7 +3,11 @@ const mongoose = require('mongoose');
 const url = `mongodb+srv://${process.env.username}:${process.env.password}@mongomon.aaimrtn.mongodb.net/phonebookApp?retryWrites=true&w=majority`;
 
 mongoose.set('strictQuery',false);
-mongoose.connect(url);
+mongoose.connect(url).then(() => {
+    console.log('connected to database');
+    }).catch(error => {
+        console.log('error connecting to database',error);
+    })
 
 const phonebookSchema = new mongoose.Schema({
   name : String,
