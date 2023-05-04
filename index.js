@@ -38,15 +38,15 @@ app.get('/info', (request, response) => {
 // Add new note route
 app.post('/api/phonebook', (request, response) => {
   const body = request.body;
-  if(checkValid(body,response)){
     const entry = new Entry({
       'name':body.name,
       'number':body.number
     });
-    entry.save().then((newEntry) => {
-      response.json(newEntry);
-    })
-  }
+    entry.save()
+      .then((newEntry) => {
+        response.json(newEntry);
+      })
+      .catch(error => next(error));
 });
 
 // Delete note route
@@ -60,30 +60,18 @@ app.delete('/api/phonebook/:id', (request, response, next) => {
 
 // Update note route
 app.put('/api/phonebook/:id', (request, response, next) => {
-  const updatedEntryObject = {
-    number: request.body.number
-  }
+  const newNumber = request.body.number;
 
-  Entry.findByIdAndUpdate(request.params.id,updatedEntryObject,{new:true})
+  Entry.findByIdAndUpdate(
+      request.params.id,
+      {newNumber},
+      {new:true, runValidators:true,context:"query"}
+    )
     .then(updatedEntry => {
       response.json(updatedEntry)
     })
     .catch(error => next(error));
 });
-
-
-function checkValid(requestData, response) {
-
-  if(requestData.name == undefined|| requestData.undefined) {
-    return response.status(400).json({ error: `Invalid Name or Number`});
-  }
-
-  return true;
-}
-
-function generateId() {
-  return (Math.floor(Math.random() * 100) + 3);
-}
 
 // handler for unknown route
 const unknownEndpoint = (request, response) => {
@@ -95,7 +83,10 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
-  } 
+  } else if (error.name === "ValidationError") { 
+    return response.status(400).json({ error: error.message });
+  }
+
 
   next(error)
 }
