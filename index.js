@@ -17,7 +17,7 @@ app.use(express.static('dist'));
 // Routes
 // Individual note route
 app.get('/api/phonebook/:id', (request, response) => {
-  Entry.findById(id).then(entry => {
+  Entry.findById(request.params.id).then(entry => {
     response.json(entry);
   })
 });
@@ -71,7 +71,6 @@ app.put('/api/phonebook/:id', (request, response) => {
     .catch(error => next(error));
 });
 
-app.listen(3001);
 
 function checkValid(requestData, response) {
 
@@ -102,3 +101,4 @@ const errorHandler = (error, request, response, next) => {
 }
 app.use(unknownEndpoint);
 app.use(errorHandler);
+app.listen(3001);
