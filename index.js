@@ -50,7 +50,7 @@ app.post('/api/phonebook', (request, response) => {
 });
 
 // Delete note route
-app.delete('/api/phonebook/:id', (request, response) => {
+app.delete('/api/phonebook/:id', (request, response, next) => {
   Entry.findByIdAndRemove(request.params.id)
     .then(response => {
       response.status(204).end();
@@ -59,7 +59,7 @@ app.delete('/api/phonebook/:id', (request, response) => {
 });
 
 // Update note route
-app.put('/api/phonebook/:id', (request, response) => {
+app.put('/api/phonebook/:id', (request, response, next) => {
   const updatedEntryObject = {
     number: request.body.number
   }
